@@ -1,5 +1,7 @@
 ﻿using ModelContextProtocol.Server;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Security.Principal;
 
 namespace MCPExample;
 
@@ -34,5 +36,51 @@ public class FileSystemTool
             throw new ArgumentException("Invalid file path.", nameof(filePath));
         }
         System.IO.File.WriteAllText(filePath, content);
+    }
+
+    [McpServerTool, Description("Search specified file in the disk and return the paths you find")]
+    public static List<string> ScanFilesAsync(string fileName, string searchPath = "C://")
+    {
+        var foundFiles = new List<string>();
+
+        void ScanDirectory(string path)
+        {
+            try
+            {
+                // Dosyaları tara
+                foreach (var file in Directory.GetFiles(path, fileName))
+                {
+                    foundFiles.Add(file); // Bulunan dosyayı listeye ekle
+                }
+
+                // Alt klasörleri tara
+                foreach (var directory in Directory.GetDirectories(path))
+                {
+                    try
+                    {
+                        ScanDirectory(directory); // Özyinelemeli tarama
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        ScanDirectory(searchPath);
+        return foundFiles;
     }
 }
