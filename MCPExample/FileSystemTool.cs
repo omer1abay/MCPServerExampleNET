@@ -47,10 +47,10 @@ public class FileSystemTool
         {
             try
             {
-                // Dosyaları tara
+                // scn the files
                 foreach (var file in Directory.GetFiles(path, fileName))
                 {
-                    foundFiles.Add(file); // Bulunan dosyayı listeye ekle
+                    foundFiles.Add(file); // add the found file to the list
                 }
 
                 // Alt klasörleri tara
@@ -58,7 +58,7 @@ public class FileSystemTool
                 {
                     try
                     {
-                        ScanDirectory(directory); // Özyinelemeli tarama
+                        ScanDirectory(directory); // recursive scan
                     }
                     catch (UnauthorizedAccessException)
                     {
